@@ -3,45 +3,87 @@ import {Breadcrumb, Button, Form, Input, Layout, Menu, theme} from 'antd';
 
 const { Item: MenuItem } = Menu;
 const { Header, Content, Footer } = Layout;
-
-const cardNumbers = ['9834 5678 1234 8765', '5432 1098 2468 7531', '7890 4321 5678 9012'];
+const generateRandomCardNumber = () => {
+    let cardNumber = '';
+    for (let i = 0; i < 16; i++) {
+        cardNumber += Math.floor(Math.random() * 10);
+        if ((i + 1) % 4 === 0 && i !== 15) {
+            cardNumber += ' ';
+        }
+    }
+    return cardNumber;
+};
+const generateRandomDateOfExpire = () => {
+    let expireDate = '';
+    expireDate += Math.floor(Math.random() * 2);
+    if (expireDate === '1') expireDate += Math.floor(Math.random() * 2); else expireDate +=Math.floor(Math.random()*9)+1;
+    expireDate += '/';
+    expireDate += Math.floor(Math.random()*10)
+    expireDate += Math.floor(Math.random()*10)
+    return expireDate;
+}
+const generateRanndomCVC = () => {
+    let CVC = '';
+    CVC += Math.floor(Math.random()*1000);
+    if (CVC < 100 && CVC > 9) CVC += '0'; else if (CVC <9 ) CVC += '00';
+    return CVC;
+}
 const names = ['John Smith', 'Alice Johnson', 'Bob Williams', 'Emily Davis'];
-const expirations = ['01/23', '04/25', '09/22', '12/26'];
-const cvcNumbers = ['123', '456', '789', '321'];
 
-const items = new Array(3).fill(null).map((_, index) => ({
+const items = new Array(4).fill(null).map((_, index) => ({
     key: (index + 1).toString(),
     NrCard: `Card ${index + 1}`,
-    NumberOfCard: cardNumbers[Math.floor(Math.random() * cardNumbers.length)],
-    DateOfExpire: expirations[Math.floor(Math.random() * expirations.length)],
+    NumberOfCard: generateRandomCardNumber(),
+    DateOfExpire: generateRandomDateOfExpire(),
     NameOfOwner: names[Math.floor(Math.random() * names.length)],
-    CVC: cvcNumbers[Math.floor(Math.random() * cvcNumbers.length)],
+    CVC: generateRanndomCVC(),
 }));
 
 const CustomForm: React.FC = () => {
+    const [formSubmitted, setFormSubmitted] = useState(false);
+    const [formData, setFormData] = useState(null);
     // Add your form logic here
     const onFinish = (values: any) => {
+        setFormSubmitted(true);
+        setFormData(values);
         // Handle form submission logic
         console.log('Form submitted with values:', values);
     };
-
+    const handleReset = () => {
+        // Ștergem valorile stocate și marcăm formularul ca netrimis
+        setFormData(null);
+        setFormSubmitted(false);
+    };
     return (
-        <Form onFinish={onFinish}>
-            <Form.Item label="Card Number" name="cardNumber" rules={[{ required: true, message: 'Please enter Card Number' }]}>
-                <Input placeholder="Enter Card Number" />
-            </Form.Item>
-            <Form.Item label="Expiry Date" name="expiryDate" rules={[{ required: true, message: 'Please enter Expiry Date' }]}>
-                <Input placeholder="Enter Expiry Date" />
-            </Form.Item>
-            <Form.Item label="CVC" name="cvc" rules={[{ required: true, message: 'Please enter CVC' }]}>
-                <Input placeholder="Enter CVC" />
-            </Form.Item>
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form.Item>
-        </Form>
+        <div>
+            <Form onFinish={onFinish}>
+                <Form.Item label="Card Number" name="cardNumber" rules={[{ required: true, message: 'Please enter Card Number' }]}>
+                    <Input style={{width: '500px'}} placeholder="Enter Card Number" />
+                </Form.Item>
+                <Form.Item label="Expiry Date" name="expiryDate" rules={[{ required: true, message: 'Please enter Expiry Date' }]}>
+                    <Input style={{width: '500px'}} placeholder="Enter Expiry Date" />
+                </Form.Item>
+                <Form.Item label="CVC" name="cvc" rules={[{ required: true, message: 'Please enter CVC' }]}>
+                    <Input style={{width: '500px'}} placeholder="Enter CVC" />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Submit
+                    </Button>
+                    <Button type="default" onClick={handleReset} style={{ marginLeft: '10px' }}>
+                        Reset
+                    </Button>
+                </Form.Item>
+            </Form>
+            {formSubmitted && (
+                <div>
+                    <h2>Form Data:</h2>
+                    <p>Card Number: {formData.cardNumber}</p>
+                    <p>Expiry Date: {formData.expiryDate}</p>
+                    <p>CVC: {formData.cvc}</p>
+                </div>
+            )}
+        </div>
     );
 };
 
