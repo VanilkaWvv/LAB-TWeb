@@ -3,6 +3,7 @@ import {Breadcrumb, Button, Form, Input, Layout, Menu, theme} from 'antd';
 
 const { Item: MenuItem } = Menu;
 const { Header, Content, Footer } = Layout;
+
 const generateRandomCardNumber = () => {
     let cardNumber = '';
     for (let i = 0; i < 16; i++) {
@@ -22,12 +23,14 @@ const generateRandomDateOfExpire = () => {
     expireDate += Math.floor(Math.random()*10)
     return expireDate;
 }
+
 const generateRanndomCVC = () => {
     let CVC = '';
     CVC += Math.floor(Math.random()*1000);
     if (CVC < 100 && CVC > 9) CVC += '0'; else if (CVC <9 ) CVC += '00';
     return CVC;
 }
+
 const names = ['John Smith', 'Alice Johnson', 'Bob Williams', 'Emily Davis'];
 
 const items = new Array(4).fill(null).map((_, index) => ({
@@ -39,42 +42,76 @@ const items = new Array(4).fill(null).map((_, index) => ({
     CVC: generateRanndomCVC(),
 }));
 
+const validateCVC = (_, value) => {
+    if (!value) {
+        return Promise.reject('Please enter CVC');
+    }
+    if (!/^\d{3}$/.test(value)) {
+        return Promise.reject('Please enter a valid CVC (3 digits)');
+    }
+
+    return Promise.resolve();
+};
+
 const CustomForm: React.FC = () => {
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [formData, setFormData] = useState(null);
-    // Add your form logic here
+
     const onFinish = (values: any) => {
         setFormSubmitted(true);
         setFormData(values);
         // Handle form submission logic
         console.log('Form submitted with values:', values);
     };
+
     const handleReset = () => {
-        // Ștergem valorile stocate și marcăm formularul ca netrimis
         setFormData(null);
         setFormSubmitted(false);
     };
+
     return (
         <div>
             <Form onFinish={onFinish}>
-                <Form.Item label="Card Number" name="cardNumber" rules={[{ required: true, message: 'Please enter Card Number' }]}>
+                <Form.Item
+                    label="Card Number"
+                    name="cardNumber"
+                    pattern="^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$"
+                    rules={[
+                        { required: true, message: 'Please enter Card Number' }
+                    ]}>
                     <Input style={{width: '500px'}} placeholder="Enter Card Number" />
                 </Form.Item>
-                <Form.Item label="Expiry Date" name="expiryDate" rules={[{ required: true, message: 'Please enter Expiry Date' }]}>
+
+                <Form.Item
+                    label="Expiry Date"
+                    name="expiryDate"
+                    pattern="^(0[1-9]|1[0-2])\/[0-9]{2}$"
+                    rules={[
+                        { required: true, message: 'Please enter Expiry Date' }]}>
                     <Input style={{width: '500px'}} placeholder="Enter Expiry Date" />
                 </Form.Item>
-                <Form.Item label="CVC" name="cvc" rules={[{ required: true, message: 'Please enter CVC' }]}>
+
+                <Form.Item
+                    label="CVC"
+                    name="cvc"
+                    rules={[
+                        { required: true, message: 'Please enter CVC' },
+                        {validator: validateCVC}]}>
                     <Input style={{width: '500px'}} placeholder="Enter CVC" />
                 </Form.Item>
+
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
                         Submit
                     </Button>
+
                     <Button type="default" onClick={handleReset} style={{ marginLeft: '10px' }}>
                         Reset
                     </Button>
+
                 </Form.Item>
             </Form>
+
             {formSubmitted && (
                 <div>
                     <h2>Form Data:</h2>
@@ -102,7 +139,7 @@ const App: React.FC = () => {
 
     return (
         <Layout>
-            <Header style={{ display: 'flex', alignItems: 'center' }}>
+            <Header style={{ display: 'flex', alignItems: 'center'}}>
                 <div className="demo-logo" />
                 <Menu
                     theme="dark"
@@ -110,7 +147,7 @@ const App: React.FC = () => {
                     defaultSelectedKeys={['1']}
                     selectedKeys={[selectedItem]}
                     onClick={handleMenuItemClick}
-                    style={{ flex: 1, minWidth: 0 }}
+                    style={{ flex: 1, minWidth: 0}}
                 >
                     {items.map(item => (
                         <MenuItem key={item.key}>{item.NrCard}</MenuItem>
