@@ -5,7 +5,7 @@ import {items} from "./MyHeader";
 import CustomForm from "../ComponentForm/CustomForm";
 import MyUser from "../User/MyUser";
 import UserInfo from "../User/SignUpUser";
-
+import UpdateUsername from "../User/UserChangeData"
 const {Content} = Layout;
 
 interface MyContentProps {
@@ -31,7 +31,10 @@ const MyContent = ({ selectedItem }: MyContentProps) => {
                     padding: 24,
                     borderRadius: borderRadiusLG,
                 }}
-            >{selectedItem === 'local'? (
+            >{selectedItem === 'data'? (
+                    <UpdateUsername/>
+                ):
+                selectedItem === 'local'? (
                     <UserInfo/>
                 ):
                 selectedItem === 'user'? (

@@ -3,8 +3,9 @@ import { saveToLocalStorage, getFromLocalStorage } from './LocalStorage';
 
 interface User {
     username: string;
-    password: string;
+    password?: string;
 }
+
 
 class UserStore {
     user: User | null = null;
