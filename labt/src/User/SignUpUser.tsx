@@ -1,5 +1,5 @@
 import "./data.css"
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getFromLocalStorage } from '../storage/LocalStorage';
 
 interface User {
@@ -9,13 +9,26 @@ interface User {
 
 const UserInfo: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const savedUser = getFromLocalStorage('user');
-        if (savedUser) {
-            setUser(savedUser);
-        }
+        const loadUser = async () => {
+            // Simulate a delay of 2 seconds
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const savedUser = getFromLocalStorage('user');
+            if (savedUser) {
+                setUser(savedUser);
+            }
+            setLoading(false);
+        };
+
+        loadUser();
     }, []);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
 
     return (
         <div>

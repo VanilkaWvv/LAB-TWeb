@@ -48,6 +48,7 @@ export const MyHeader = ({ selectedItem, setSelectedItem }: MyHeaderProps) => {
                 <MenuItem key="form">Create Acount</MenuItem>
                 <MenuItem key="user">User config</MenuItem>
                 <MenuItem key="local">Local Storage</MenuItem>
+                <MenuItem key="data">Change Data</MenuItem>
             </Menu>
         </Header>
     );
